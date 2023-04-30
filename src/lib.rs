@@ -40,7 +40,10 @@ impl FromStr for WheelInfo {
         if distribution.contains("__") || !NAME_RE.is_match(&distribution) {
             return Err(WheelInfoParseError::InvalidDistributionName(distribution));
         }
-        // TODO: canonicalize name?
+        let distribution = distribution
+            .to_lowercase()
+            .replace("_", "-")
+            .replace(".", "-");
 
         let version = match Version::from_str(parts[1]) {
             Err(reason) => return Err(WheelInfoParseError::InvalidVersion(reason)),
@@ -185,7 +188,7 @@ mod wheel_info_tests {
         assert_eq!(
             wheel_info,
             WheelInfo {
-                distribution: "charset_normalizer".to_string(),
+                distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.0.1").unwrap(),
                 build_tag: None,
                 python_tag: "cp37".to_string(),
@@ -204,7 +207,7 @@ mod wheel_info_tests {
         assert_eq!(
             wheel_info,
             WheelInfo {
-                distribution: "charset_normalizer".to_string(),
+                distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.1.0").unwrap(),
                 build_tag: None,
                 python_tag: "py3".to_string(),
@@ -225,9 +228,6 @@ mod wheel_info_tests {
     #[test]
     fn from_str_kekab() -> Result<(), WheelInfoParseError> {
         // Wheel name `distribution` field is not allowed to have a dash in it.
-        // This is an invalid wheel name because the distribution
-        // `charset-normalizer` has not been normalized to
-        // `charset_normalizer`.
         let wheel_info = WheelInfo::from_str("charset-normalizer-3.1.0-py3-none-any.whl");
         assert_eq!(
             wheel_info,
