@@ -120,7 +120,7 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
-    fn from_str_simple() -> Result<(), WheelNameParseError> {
+    fn test_from_str_simple() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("requests-2.29.0-py3-none-any.whl")?;
         assert_eq!(
             wheel_name,
@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn from_str_build_tag() -> Result<(), WheelNameParseError> {
+    fn test_from_str_build_tag() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("requests-2.29.0-1-py3-none-any.whl")?;
         assert_eq!(
             wheel_name,
@@ -157,7 +157,7 @@ mod tests {
     }
 
     #[test]
-    fn from_str_build_tag_trailing_content() -> Result<(), WheelNameParseError> {
+    fn test_from_str_build_tag_trailing_content() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("requests-2.29.0-1asdf-py3-none-any.whl")?;
         assert_eq!(
             wheel_name,
@@ -177,7 +177,7 @@ mod tests {
     }
 
     #[test]
-    fn from_str_multiple_platforms() -> Result<(), WheelNameParseError> {
+    fn test_from_str_multiple_platforms() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("charset_normalizer-3.0.1-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl")?;
         assert_eq!(
             wheel_name,
@@ -196,7 +196,7 @@ mod tests {
     }
 
     #[test]
-    fn from_str_underscore_name() -> Result<(), WheelNameParseError> {
+    fn test_from_str_underscore_name() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("charset_normalizer-3.1.0-py3-none-any.whl")?;
         assert_eq!(
             wheel_name,
@@ -213,14 +213,14 @@ mod tests {
     }
 
     #[test]
-    fn from_str_not_wheel() -> Result<(), WheelNameParseError> {
+    fn test_from_str_not_wheel() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("charset-normalizer-3.1.0.tar.gz");
         assert_eq!(wheel_name, Err(WheelNameParseError::NotAWheel),);
         Ok(())
     }
 
     #[test]
-    fn from_str_kekab() -> Result<(), WheelNameParseError> {
+    fn test_from_str_kekab() -> Result<(), WheelNameParseError> {
         // Wheel name `distribution` field is not allowed to have a dash in it.
         let wheel_name = WheelName::from_str("charset-normalizer-3.1.0-py3-none-any.whl");
         assert_eq!(
