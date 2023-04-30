@@ -1,10 +1,16 @@
 # pep-427-rs
 
-Toolkit to provide access to Python's canonical binary distribution format:
-[wheels](https://packaging.python.org/en/latest/specifications/binary-distribution-format/)!
+Toolkit to provide structured information about Python's canonical binary distribution format: wheels!
+This repo is named after the historical spec [PEP-0427](https://peps.python.org/pep-0427/),
+but it is implemented based on the [up-to-date spec](https://packaging.python.org/en/latest/specifications/binary-distribution-format/).
 
-Note that this is named after the historical spec [PEP-0427](https://peps.python.org/pep-0427/),
-but it is based on the up-to-date bdist format spec on https://packaging.python.org.
+It targets the following features:
+
+- Wheel name parsing
+- `WHEEL` file parsing
+- `METADATA` file parsing
+
+This library does not support installing wheels.
 
 ## Usage
 
