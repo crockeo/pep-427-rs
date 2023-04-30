@@ -13,7 +13,7 @@ To add it to your project, you need to add a git dependency:
 
 ```toml
 [dependencies.py_wheel]
-git = "https://github.com/crockeo/py-wheel-rs"
+git = "https://github.com/crockeo/pep-427-rs"
 rev = "<HEAD of main>"
 ```
 
