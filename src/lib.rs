@@ -31,7 +31,7 @@ impl FromStr for WheelInfo {
 	    return Err(WheelInfoParseError::NotAWheel)
 	};
 
-        let parts = filename.split("-").collect::<Vec<&str>>();
+        let parts = filename.split('-').collect::<Vec<&str>>();
         if parts.len() != 5 && parts.len() != 6 {
             return Err(WheelInfoParseError::PartMismatch);
         }
@@ -40,10 +40,7 @@ impl FromStr for WheelInfo {
         if distribution.contains("__") || !NAME_RE.is_match(&distribution) {
             return Err(WheelInfoParseError::InvalidDistributionName(distribution));
         }
-        let distribution = distribution
-            .to_lowercase()
-            .replace("_", "-")
-            .replace(".", "-");
+        let distribution = distribution.to_lowercase().replace(['_', '.'], "-");
 
         let version = match Version::from_str(parts[1]) {
             Err(reason) => return Err(WheelInfoParseError::InvalidVersion(reason)),
@@ -90,7 +87,7 @@ impl FromStr for BuildTag {
 	};
         let remainder = {
             let raw_remainder = captures.name("remainder").unwrap().as_str();
-            if raw_remainder == "" {
+            if raw_remainder.is_empty() {
                 None
             } else {
                 Some(raw_remainder.to_owned())
