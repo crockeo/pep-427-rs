@@ -24,24 +24,26 @@ impl FromStr for WheelFile {
         for line in s.lines() {
             if let Some(line) = line.strip_prefix("Wheel-Version: ") {
                 if wheel_version.is_some() {
-                    todo!("deduplicate");
+                    return Err(WheelFileParseError::DuplicateField("wheel_version"));
                 }
                 wheel_version = Some(line.to_owned());
             }
 
             if let Some(line) = line.strip_prefix("Generator: ") {
                 if generator.is_some() {
-                    todo!("deduplicate");
+                    return Err(WheelFileParseError::DuplicateField("generator"));
                 }
                 generator = Some(line.to_owned());
             }
 
             if let Some(line) = line.strip_prefix("Root-Is-Purelib: ") {
                 if root_is_purelib.is_some() {
-                    todo!("deduplicate");
+                    return Err(WheelFileParseError::DuplicateField("root_is_purelib"));
                 }
                 root_is_purelib = Some(match str::parse::<bool>(line) {
-                    Err(_) => todo!(),
+                    Err(_) => {
+                        return Err(WheelFileParseError::InvalidFieldValue("root_is_purelib"))
+                    }
                     Ok(x) => x,
                 });
             }
@@ -52,10 +54,10 @@ impl FromStr for WheelFile {
 
             if let Some(line) = line.strip_prefix("Build: ") {
                 if build.is_some() {
-                    todo!("deduplicate");
+                    return Err(WheelFileParseError::DuplicateField("build"));
                 }
                 build = Some(match str::parse::<usize>(line) {
-                    Err(_) => todo!(),
+                    Err(_) => return Err(WheelFileParseError::InvalidFieldValue("build")),
                     Ok(x) => x,
                 });
             }
@@ -63,7 +65,7 @@ impl FromStr for WheelFile {
 
         let Some(wheel_version) = wheel_version else { return Err(WheelFileParseError::MissingField("wheel_version")) };
         let Some(generator) = generator else { return Err(WheelFileParseError::MissingField("generator")) };
-        let Some(root_is_purelib) = root_is_purelib else { todo!() };
+        let Some(root_is_purelib) = root_is_purelib else { return Err(WheelFileParseError::MissingField("root_is_purelib")) };
 
         Ok(WheelFile {
             wheel_version,
@@ -77,6 +79,8 @@ impl FromStr for WheelFile {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum WheelFileParseError {
+    DuplicateField(&'static str),
+    InvalidFieldValue(&'static str),
     MissingField(&'static str),
 }
 
