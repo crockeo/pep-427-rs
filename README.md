@@ -1,7 +1,10 @@
-# py-wheel-rs
+# pep-427-rs
 
 Toolkit to provide access to Python's canonical binary distribution format:
 [wheels](https://packaging.python.org/en/latest/specifications/binary-distribution-format/)!
+
+Note that this is named after the historical spec [PEP-0427](https://peps.python.org/pep-0427/),
+but it is based on the up-to-date bdist format spec on https://packaging.python.org.
 
 ## Usage
 
@@ -17,4 +20,3 @@ rev = "<HEAD of main>"
 ## License
 
 MIT Open Source, see [LICENSE](./LICENSE).
-
