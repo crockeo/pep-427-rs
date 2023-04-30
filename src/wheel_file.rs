@@ -77,10 +77,15 @@ impl FromStr for WheelFile {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(thiserror::Error, Debug, Eq, PartialEq)]
 pub enum WheelFileParseError {
+    #[error("there is at least one duplicate field")]
     DuplicateField(&'static str),
+
+    #[error("a field has an invalid value")]
     InvalidFieldValue(&'static str),
+
+    #[error("there is a missing field")]
     MissingField(&'static str),
 }
 
