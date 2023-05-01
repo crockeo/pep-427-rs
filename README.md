@@ -4,13 +4,18 @@ Toolkit to provide structured information about Python's canonical binary distri
 This repo is named after the historical spec [PEP-0427](https://peps.python.org/pep-0427/),
 but it is implemented based on the [up-to-date spec](https://packaging.python.org/en/latest/specifications/binary-distribution-format/).
 
-It targets the following features:
+It includes the following features:
 
-- Wheel name parsing
-- `WHEEL` file parsing
-- `METADATA` file parsing
+- Wheel name parsing.
+- `WHEEL` file parsing.
 
-This library does not support installing wheels.
+Targeted features which are not yet implemented:
+
+- `METADATA` file parsing.
+- `RECORD` file parsing.
+- Opening `.whl` files to allow parsing w/o fully unpacking the file.
+
+This library does not and will not support installing wheels.
 
 ## Usage
 
