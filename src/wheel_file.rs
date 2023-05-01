@@ -15,6 +15,8 @@ impl FromStr for WheelFile {
     type Err = WheelFileParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        use WheelFileParseError::*;
+
         let mut wheel_version = None;
         let mut generator = None;
         let mut root_is_purelib = None;
@@ -24,28 +26,26 @@ impl FromStr for WheelFile {
         for line in s.lines() {
             if let Some(line) = line.strip_prefix("Wheel-Version: ") {
                 if wheel_version.is_some() {
-                    return Err(WheelFileParseError::DuplicateField("wheel_version"));
+                    return Err(DuplicateField("wheel_version"));
                 }
                 wheel_version = Some(line.to_owned());
             }
 
             if let Some(line) = line.strip_prefix("Generator: ") {
                 if generator.is_some() {
-                    return Err(WheelFileParseError::DuplicateField("generator"));
+                    return Err(DuplicateField("generator"));
                 }
                 generator = Some(line.to_owned());
             }
 
             if let Some(line) = line.strip_prefix("Root-Is-Purelib: ") {
                 if root_is_purelib.is_some() {
-                    return Err(WheelFileParseError::DuplicateField("root_is_purelib"));
+                    return Err(DuplicateField("root_is_purelib"));
                 }
-                root_is_purelib = Some(match str::parse::<bool>(line) {
-                    Err(_) => {
-                        return Err(WheelFileParseError::InvalidFieldValue("root_is_purelib"))
-                    }
-                    Ok(x) => x,
-                });
+                root_is_purelib = Some(
+                    str::parse::<bool>(line)
+                        .map_err(|e| InvalidFieldValue("root_is_purelib", e.to_string()))?,
+                );
             }
 
             if let Some(line) = line.strip_prefix("Tag: ") {
@@ -54,23 +54,19 @@ impl FromStr for WheelFile {
 
             if let Some(line) = line.strip_prefix("Build: ") {
                 if build.is_some() {
-                    return Err(WheelFileParseError::DuplicateField("build"));
+                    return Err(DuplicateField("build"));
                 }
-                build = Some(match str::parse::<usize>(line) {
-                    Err(_) => return Err(WheelFileParseError::InvalidFieldValue("build")),
-                    Ok(x) => x,
-                });
+                build = Some(
+                    str::parse::<usize>(line)
+                        .map_err(|e| InvalidFieldValue("build", e.to_string()))?,
+                );
             }
         }
 
-        let Some(wheel_version) = wheel_version else { return Err(WheelFileParseError::MissingField("wheel_version")) };
-        let Some(generator) = generator else { return Err(WheelFileParseError::MissingField("generator")) };
-        let Some(root_is_purelib) = root_is_purelib else { return Err(WheelFileParseError::MissingField("root_is_purelib")) };
-
         Ok(WheelFile {
-            wheel_version,
-            generator,
-            root_is_purelib,
+            wheel_version: wheel_version.ok_or(MissingField("wheel_version"))?,
+            generator: generator.ok_or(MissingField("generator"))?,
+            root_is_purelib: root_is_purelib.ok_or(MissingField("root_is_purelib"))?,
             tags,
             build,
         })
@@ -83,7 +79,7 @@ pub enum WheelFileParseError {
     DuplicateField(&'static str),
 
     #[error("a field has an invalid value")]
-    InvalidFieldValue(&'static str),
+    InvalidFieldValue(&'static str, String),
 
     #[error("there is a missing field")]
     MissingField(&'static str),
