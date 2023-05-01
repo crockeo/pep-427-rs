@@ -3,9 +3,11 @@
 //! for more information.
 
 mod metadata_file;
+mod record_file;
 mod wheel_file;
 mod wheel_name;
 
 pub use metadata_file::MetadataFile;
+pub use record_file::RecordFile;
 pub use wheel_file::WheelFile;
 pub use wheel_name::WheelName;
