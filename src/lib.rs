@@ -33,11 +33,13 @@ impl<R: Read + Seek> Wheel<R> {
     }
 
     pub fn metadata_file(&mut self) -> Result<MetadataFile, WheelError> {
-        todo!("replace with wheel_file-like implementation when FromStr is ready")
+        Ok(MetadataFile::from_str(
+            &self.dist_info_contents("METADATA")?,
+        )?)
     }
 
     pub fn record_file(&mut self) -> Result<RecordFile, WheelError> {
-        todo!("replace with wheel_file-like implementation when FromStr is ready")
+        Ok(RecordFile::from_str(&self.dist_info_contents("RECORD")?)?)
     }
 
     pub fn wheel_file(&mut self) -> Result<WheelFile, WheelError> {
@@ -63,6 +65,12 @@ impl<R: Read + Seek> Wheel<R> {
 
 #[derive(thiserror::Error, Debug)]
 pub enum WheelError {
+    #[error("encountered error while parsing metadata file")]
+    MetadataFileParseError(metadata_file::MetadataFileParseError),
+
+    #[error("encountered error while parsing record file")]
+    RecordFileParseError(record_file::RecordFileParseError),
+
     #[error("encountered error while parsing wheel file")]
     WheelFileParseError(wheel_file::WheelFileParseError),
 
@@ -74,6 +82,18 @@ pub enum WheelError {
 
     #[error("encountered IO error")]
     IOError(io::Error),
+}
+
+impl From<metadata_file::MetadataFileParseError> for WheelError {
+    fn from(value: metadata_file::MetadataFileParseError) -> Self {
+        Self::MetadataFileParseError(value)
+    }
+}
+
+impl From<record_file::RecordFileParseError> for WheelError {
+    fn from(value: record_file::RecordFileParseError) -> Self {
+        Self::RecordFileParseError(value)
+    }
 }
 
 impl From<wheel_file::WheelFileParseError> for WheelError {

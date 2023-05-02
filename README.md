@@ -8,12 +8,12 @@ It includes the following features:
 
 - Wheel name parsing.
 - `WHEEL` file parsing.
+- Opening `.whl` files to allow parsing w/o fully unpacking the file.
 
 Targeted features which are not yet implemented:
 
 - `METADATA` file parsing.
 - `RECORD` file parsing.
-- Opening `.whl` files to allow parsing w/o fully unpacking the file.
 
 This library does not and will not support installing wheels.
 
