@@ -15,7 +15,7 @@ use std::str::FromStr;
 use zip::ZipArchive;
 
 pub use metadata_file::MetadataFile;
-pub use record_file::RecordFile;
+pub use record_file::{RecordEntry, RecordFile};
 pub use wheel_file::WheelFile;
 pub use wheel_name::WheelName;
 
