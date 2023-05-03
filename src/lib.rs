@@ -65,57 +65,21 @@ impl<R: Read + Seek> Wheel<R> {
 
 #[derive(thiserror::Error, Debug)]
 pub enum WheelError {
-    #[error("encountered error while parsing metadata file")]
-    MetadataFileParseError(metadata_file::MetadataFileParseError),
+    #[error(transparent)]
+    MetadataFileParseError(#[from] metadata_file::MetadataFileParseError),
 
-    #[error("encountered error while parsing record file")]
-    RecordFileParseError(record_file::RecordFileParseError),
+    #[error(transparent)]
+    RecordFileParseError(#[from] record_file::RecordFileParseError),
 
-    #[error("encountered error while parsing wheel file")]
-    WheelFileParseError(wheel_file::WheelFileParseError),
+    #[error(transparent)]
+    WheelFileParseError(#[from] wheel_file::WheelFileParseError),
 
-    #[error("encountered error while parsing wheel name")]
-    WheelNameParseError(wheel_name::WheelNameParseError),
+    #[error(transparent)]
+    WheelNameParseError(#[from] wheel_name::WheelNameParseError),
 
-    #[error("encountered zip error")]
-    ZipError(zip::result::ZipError),
+    #[error(transparent)]
+    ZipError(#[from] zip::result::ZipError),
 
-    #[error("encountered IO error")]
-    IOError(io::Error),
-}
-
-impl From<metadata_file::MetadataFileParseError> for WheelError {
-    fn from(value: metadata_file::MetadataFileParseError) -> Self {
-        Self::MetadataFileParseError(value)
-    }
-}
-
-impl From<record_file::RecordFileParseError> for WheelError {
-    fn from(value: record_file::RecordFileParseError) -> Self {
-        Self::RecordFileParseError(value)
-    }
-}
-
-impl From<wheel_file::WheelFileParseError> for WheelError {
-    fn from(value: wheel_file::WheelFileParseError) -> Self {
-        Self::WheelFileParseError(value)
-    }
-}
-
-impl From<wheel_name::WheelNameParseError> for WheelError {
-    fn from(value: wheel_name::WheelNameParseError) -> Self {
-        Self::WheelNameParseError(value)
-    }
-}
-
-impl From<zip::result::ZipError> for WheelError {
-    fn from(value: zip::result::ZipError) -> Self {
-        Self::ZipError(value)
-    }
-}
-
-impl From<io::Error> for WheelError {
-    fn from(value: io::Error) -> Self {
-        Self::IOError(value)
-    }
+    #[error(transparent)]
+    IOError(#[from] io::Error),
 }
