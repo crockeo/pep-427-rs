@@ -6,6 +6,7 @@ pub struct MetadataFile {
     pub name: String,
     pub version: String,
     // TODO: dynamic https://packaging.python.org/en/latest/specifications/core-metadata/#dynamic-multiple-use
+    pub dynamic: (),
     pub platform: String,
     pub supported_platform: String,
     pub summary: String,
