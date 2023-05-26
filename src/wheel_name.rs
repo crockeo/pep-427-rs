@@ -1,4 +1,4 @@
-use std::{str::FromStr, collections::HashSet};
+use std::{collections::HashSet, str::FromStr};
 
 use lazy_static::lazy_static;
 use pep440_rs::Version;
@@ -15,7 +15,7 @@ pub struct WheelName {
     pub distribution: String,
     pub version: Version,
     pub build_tag: Option<BuildTag>,
-    pub tags: HashSet<Tag>
+    pub tags: HashSet<Tag>,
 }
 
 impl FromStr for WheelName {
@@ -160,7 +160,7 @@ mod tests {
                 distribution: "requests".to_string(),
                 version: Version::from_str("2.29.0").unwrap(),
                 build_tag: None,
-                tags: hashset!{
+                tags: hashset! {
                     Tag {
                         python: "py3".to_string(),
                         abi: "none".to_string(),
@@ -184,7 +184,7 @@ mod tests {
                     number: 1,
                     remainder: None,
                 }),
-                tags: hashset!{
+                tags: hashset! {
                     Tag {
                         python: "py3".to_string(),
                         abi: "none".to_string(),
@@ -208,7 +208,7 @@ mod tests {
                     number: 1,
                     remainder: Some("asdf".to_string()),
                 }),
-                tags: hashset!{
+                tags: hashset! {
                     Tag {
                         python: "py3".to_string(),
                         abi: "none".to_string(),
@@ -229,7 +229,7 @@ mod tests {
                 distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.0.1").unwrap(),
                 build_tag: None,
-                tags: hashset!{
+                tags: hashset! {
                     Tag {
                         python: "cp37".to_string(),
                         abi: "cp37m".to_string(),
@@ -265,7 +265,7 @@ mod tests {
                 distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.1.0").unwrap(),
                 build_tag: None,
-                tags: hashset!{
+                tags: hashset! {
                     Tag {
                         python: "py3".to_string(),
                         abi: "none".to_string(),

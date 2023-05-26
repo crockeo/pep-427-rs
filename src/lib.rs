@@ -5,7 +5,7 @@
 mod metadata_file;
 mod record_file;
 mod wheel_file;
-mod wheel_name;
+pub mod wheel_name;
 
 use std::io;
 use std::io::Read;
