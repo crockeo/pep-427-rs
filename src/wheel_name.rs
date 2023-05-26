@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, collections::HashSet};
 
 use lazy_static::lazy_static;
 use pep440_rs::Version;
@@ -15,9 +15,7 @@ pub struct WheelName {
     pub distribution: String,
     pub version: Version,
     pub build_tag: Option<BuildTag>,
-    pub python_tag: String,
-    pub abi_tag: String,
-    pub platform_tag: String,
+    pub tags: HashSet<Tag>
 }
 
 impl FromStr for WheelName {
@@ -54,15 +52,37 @@ impl FromStr for WheelName {
         let python_tag = parts[2 + index_offset].to_owned();
         let abi_tag = parts[3 + index_offset].to_owned();
         let platform_tag = parts[4 + index_offset].to_owned();
+        let tags = parse_tags(&python_tag, &abi_tag, &platform_tag);
         Ok(Self {
             distribution,
             version,
             build_tag,
-            python_tag,
-            abi_tag,
-            platform_tag,
+            tags,
         })
     }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+pub struct Tag {
+    pub python: String,
+    pub abi: String,
+    pub platform: String,
+}
+
+fn parse_tags(python_tag: &str, abi_tag: &str, platform_tag: &str) -> HashSet<Tag> {
+    let mut tags = HashSet::new();
+    for python in python_tag.split('.') {
+        for abi in abi_tag.split('.') {
+            for platform in platform_tag.split('.') {
+                tags.insert(Tag {
+                    python: python.to_owned(),
+                    abi: abi.to_owned(),
+                    platform: platform.to_owned(),
+                });
+            }
+        }
+    }
+    tags
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -119,6 +139,18 @@ mod tests {
 
     use pretty_assertions::assert_eq;
 
+    macro_rules! hashset {
+        {$($x:expr),*} => {
+            {
+                let mut temp_set = HashSet::new();
+                $(
+                    temp_set.insert($x);
+                )*
+                temp_set
+            }
+        };
+    }
+
     #[test]
     fn test_from_str_simple() -> Result<(), WheelNameParseError> {
         let wheel_name = WheelName::from_str("requests-2.29.0-py3-none-any.whl")?;
@@ -128,9 +160,13 @@ mod tests {
                 distribution: "requests".to_string(),
                 version: Version::from_str("2.29.0").unwrap(),
                 build_tag: None,
-                python_tag: "py3".to_string(),
-                abi_tag: "none".to_string(),
-                platform_tag: "any".to_string(),
+                tags: hashset!{
+                    Tag {
+                        python: "py3".to_string(),
+                        abi: "none".to_string(),
+                        platform: "any".to_string(),
+                    }
+                },
             },
         );
         Ok(())
@@ -148,9 +184,13 @@ mod tests {
                     number: 1,
                     remainder: None,
                 }),
-                python_tag: "py3".to_string(),
-                abi_tag: "none".to_string(),
-                platform_tag: "any".to_string(),
+                tags: hashset!{
+                    Tag {
+                        python: "py3".to_string(),
+                        abi: "none".to_string(),
+                        platform: "any".to_string(),
+                    }
+                },
             },
         );
         Ok(())
@@ -168,9 +208,13 @@ mod tests {
                     number: 1,
                     remainder: Some("asdf".to_string()),
                 }),
-                python_tag: "py3".to_string(),
-                abi_tag: "none".to_string(),
-                platform_tag: "any".to_string(),
+                tags: hashset!{
+                    Tag {
+                        python: "py3".to_string(),
+                        abi: "none".to_string(),
+                        platform: "any".to_string(),
+                    }
+                },
             },
         );
         Ok(())
@@ -185,11 +229,28 @@ mod tests {
                 distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.0.1").unwrap(),
                 build_tag: None,
-                python_tag: "cp37".to_string(),
-                abi_tag: "cp37m".to_string(),
-                platform_tag:
-                    "manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686"
-                        .to_string(),
+                tags: hashset!{
+                    Tag {
+                        python: "cp37".to_string(),
+                        abi: "cp37m".to_string(),
+                        platform: "manylinux1_i686".to_string(),
+                    },
+                    Tag {
+                        python: "cp37".to_string(),
+                        abi: "cp37m".to_string(),
+                        platform: "manylinux_2_5_i686".to_string(),
+                    },
+                    Tag {
+                        python: "cp37".to_string(),
+                        abi: "cp37m".to_string(),
+                        platform: "manylinux_2_17_i686".to_string(),
+                    },
+                    Tag {
+                        python: "cp37".to_string(),
+                        abi: "cp37m".to_string(),
+                        platform: "manylinux2014_i686".to_string(),
+                    }
+                },
             },
         );
         Ok(())
@@ -204,9 +265,13 @@ mod tests {
                 distribution: "charset-normalizer".to_string(),
                 version: Version::from_str("3.1.0").unwrap(),
                 build_tag: None,
-                python_tag: "py3".to_string(),
-                abi_tag: "none".to_string(),
-                platform_tag: "any".to_string(),
+                tags: hashset!{
+                    Tag {
+                        python: "py3".to_string(),
+                        abi: "none".to_string(),
+                        platform: "any".to_string(),
+                    }
+                },
             },
         );
         Ok(())
