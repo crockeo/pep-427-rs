@@ -1,4 +1,4 @@
-use std::{collections::HashSet, str::FromStr};
+use std::{collections::HashSet, str::FromStr, fmt::Display};
 
 use lazy_static::lazy_static;
 use pep440_rs::Version;
@@ -67,6 +67,12 @@ pub struct Tag {
     pub python: String,
     pub abi: String,
     pub platform: String,
+}
+
+impl Display for Tag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}-{}", self.python, self.abi, self.platform)
+    }
 }
 
 fn parse_tags(python_tag: &str, abi_tag: &str, platform_tag: &str) -> HashSet<Tag> {
